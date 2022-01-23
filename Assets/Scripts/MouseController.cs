@@ -1,30 +1,47 @@
 ﻿using System;
-using Managers.Tilemap;
+using Managers;
+using Managers.Plants;
+using Managers.Tilemaps;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
-using UnityEngine.WSA;
 using Tile = UnityEngine.Tilemaps.Tile;
 
 public class MouseController: MonoBehaviour
 {
-    [SerializeField] private Tile selectedTile;
+    public PlantType selectedPlantType;
     [SerializeField] private GroundTilemapManager groundTilemapManager;
+    [SerializeField] private WalletManager walletManager;
+    [SerializeField] private PlantsManager plantsManager;
 
-    public void SelectTile(Tile tile)
+    public void SelectPlantType(int plantType)
     {
-        selectedTile = tile;
+        selectedPlantType = plantType switch
+        {
+            1 => PlantType.Potatoes,
+            2 => PlantType.Tomatoes,
+            3 => PlantType.Beets,
+            _ => throw new ArgumentOutOfRangeException(nameof(plantType), plantType, null)
+        };
     }
 
     private void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Debug.Log("mouse down");
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             mousePos.z = 0;
             Vector3Int cellSelected = groundTilemapManager.tilemap.WorldToCell(mousePos);
             cellSelected.z = 0;
-            groundTilemapManager.PlotTile(cellSelected, selectedTile);
+
+            if (walletManager.CanAfford(10))
+            {
+                var plotted= plantsManager.CreatePlant(selectedPlantType, cellSelected);
+                if (plotted)
+                {
+                    walletManager.Decrease(10);
+                }
+            }
         }
     }
 }
