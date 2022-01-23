@@ -5,8 +5,8 @@ namespace Managers.Tilemap
 {
     public class TilemapManager : MonoBehaviour
     {
-        [SerializeField] protected UnityEngine.Tilemaps.Tilemap tilemap;
-        [SerializeField] private Vector2Int gridSize = new Vector2Int(3,3);
+        [SerializeField] public UnityEngine.Tilemaps.Tilemap tilemap;
+        [SerializeField] protected Vector2Int gridSize = new Vector2Int(3,3);
 
         protected IEnumerable<Vector2Int> GridIterator()
         {
